@@ -33,6 +33,8 @@ export type WeeklySchedule = {
   /** Shifts per weekday. Missing or empty means no shifts that day. */
   shifts: Partial<Record<Weekday, Shift[]>>;
   recurringStops: RecurringStop[];
+  /** Stop catalog for the dog's campus; resolves RecurringStop.stopId to a name. */
+  stops: Stop[];
 };
 
 export type DutyStatus = 'on_duty' | 'on_break' | 'off_duty';

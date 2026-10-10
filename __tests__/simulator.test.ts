@@ -121,6 +121,14 @@ describe('MockDataService getters', () => {
   it('getSchedule rejects for unknown dog', async () => {
     await expect(svc.getSchedule('nope')).rejects.toThrow();
   });
+  it('getSchedule returns stops covering every recurring stop id for both universities', async () => {
+    for (const dogId of ['dog-csu-biscuit', 'dog-utah-juniper']) {
+      const sched = await svc.getSchedule(dogId);
+      const ids = new Set(sched.stops.map((x) => x.id));
+      expect(sched.recurringStops.length).toBeGreaterThan(0);
+      for (const r of sched.recurringStops) expect(ids.has(r.stopId)).toBe(true);
+    }
+  });
   it('getUniversities lists the registry', async () => {
     expect((await svc.getUniversities()).map((u) => u.id)).toEqual(['csu', 'utah']);
   });
