@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 import type { Weekday, WeeklySchedule } from '../../domain/types';
 import { useTheme } from '../../theme';
 import { ThemedText } from '../ThemedText';
-import { DAY_NAMES, DAY_ORDER, formatRange, humanizeStopId } from './format';
+import { DAY_NAMES, DAY_ORDER, formatRange, stopName } from './format';
 
 export function ScheduleView({ schedule, today }: { schedule: WeeklySchedule; today: Weekday }) {
   const { colors, spacing, radii } = useTheme();
@@ -87,11 +87,11 @@ export function ScheduleView({ schedule, today }: { schedule: WeeklySchedule; to
             accessible
             style={{ minHeight: 44, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface }}
           >
-            <ThemedText variant="title">{s.note ?? humanizeStopId(s.stopId)}</ThemedText>
+            <ThemedText variant="title">{stopName(schedule.stops, s.stopId)}</ThemedText>
             <ThemedText>{`${DAY_NAMES[s.weekday]}, ${formatRange(s)}`}</ThemedText>
             {s.note ? (
               <ThemedText variant="caption" muted>
-                {humanizeStopId(s.stopId)}
+                {s.note}
               </ThemedText>
             ) : null}
           </View>

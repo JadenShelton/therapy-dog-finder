@@ -22,8 +22,9 @@ export function formatRange(r: { start: string; end: string }): string {
   return `${formatTime(r.start)} to ${formatTime(r.end)}`;
 }
 
-/** 'csu-morgan' -> 'Morgan'. Fallback only: the schedule carries stop ids, not names. */
-export function humanizeStopId(id: string): string {
-  const rest = id.split('-').slice(1).join(' ') || id;
-  return rest.charAt(0).toUpperCase() + rest.slice(1);
+export const UNKNOWN_STOP_NAME = 'Campus stop';
+
+/** Resolve a stop id to its name via the schedule's stop catalog. Never throws. */
+export function stopName(stops: { id: string; name: string }[] | undefined, id: string): string {
+  return stops?.find((s) => s.id === id)?.name || UNKNOWN_STOP_NAME;
 }
