@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { defaultUniversity } from '../config/universities';
 import { useUniversity } from '../state/UniversityProvider';
-import { buildTheme, type Theme } from './tokens';
+import { buildNeutralTheme, buildTheme, type Theme } from './tokens';
 
 const ThemeContext = createContext<Theme | null>(null);
 
-/** Theme follows the selected university; falls back to the default before one is chosen. */
+/** Theme follows the selected university; it is neutral (unbranded) until one is chosen. */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { university } = useUniversity();
-  const theme = useMemo(() => buildTheme(university ?? defaultUniversity), [university]);
+  const theme = useMemo(() => (university ? buildTheme(university) : buildNeutralTheme()), [university]);
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
 }
 
