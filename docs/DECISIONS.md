@@ -22,6 +22,7 @@ Off-duty `LocationUpdate`s contain no coordinates. Schedules are evaluated in th
 - Utah (brand.utah.edu/branding/colors): Utah Red `#BE0000`, Black `#000000`, Zion Cinder Cone `#707271`, Salt Flat Grey `#E2E6E6`.
 - CSU Gold is never used as text or icons on light backgrounds (≈1.7:1). It is used only as a fill or accent, or as text on green.
 - Every text/background token pair must pass 4.5:1, enforced by a unit test.
+- PR 1 outcome: Utah `textMuted` = `#59595B` instead of Zion `#707271`. Zion measured 4.33:1 on the `#F2F2F2` surface. CSU green-on-gold measured 5.35:1.
 
 ## D7: Movement simulation. APPROVED
 4 or 5 stops, a 15 s tick, a dwell of 1 or 2 ticks at each stop, and one mid-shift break. A dev-only override (Auto / On duty / On break / Off duty).
@@ -35,3 +36,13 @@ Third-party reference points: CSU center 40.57377, -105.09093 / 40.57326, -105.0
 
 ## D11: Placeholders. APPROVED
 Placeholder names (app, dog, handler), logos, and pictures are fine. App name is "Paws on Campus". No official logos or trademarks.
+
+## D12: Extra dependencies added in PR 1 without prior approval. PROPOSED (needs user OK)
+The PR 1 engineer added these, which were not in the brief's allowed list:
+- `react-native-gesture-handler`, `react-native-reanimated`, `react-native-worklets`, `react-dom`, `react-native-web`. The engineer says expo-router's peer requirements failed without them.
+- `@types/jest` (dev only).
+
+PM view: these are standard Expo Router peers that ship with Expo Go, so D1 effectively implies them. The recommendation is to keep them.
+
+## D13: Tab icons. PROPOSED (needs user OK)
+PR 1 shipped tabs without icons. Proposal: use `@expo/vector-icons` (bundled with Expo and available in Expo Go) for generic icons such as map, calendar, and info. These are not university marks.
