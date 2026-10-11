@@ -1,29 +1,33 @@
 # Paws on Campus: Plan
 
-Status: **RECOVERY IN PROGRESS.** PRs #1 to #6 were merged on GitHub, but only #1 reached `main` (see D16). PR `restore-merged-work` → `main` is being prepared. It also commits these docs.
+Status: **PROTOTYPE COMPLETE on `main` (2026-10-10).** All work merged via PR #7. The user verified the full demo on their phone in Expo Go. See `docs/DECISIONS.md` (D1 to D16).
 
 ## Goal
 An Expo (TypeScript) prototype for iOS and Android that runs in Expo Go. It shows where a university's therapy dog is on campus during working hours. All data is mocked behind one data-service interface. Supported schools: CSU (Fort Collins) and University of Utah. A third school should need only a config entry.
 
-## Architecture
+## How to run
+`git checkout main && git pull && npm install && npx expo start` (add `-c` if the bundle looks stale), then scan the QR code with Expo Go. Tests: `npx jest` (98 tests, 11 suites as of PR #7).
+
+## Architecture (as built)
 ```
 app/                      Expo Router routes
   _layout.tsx             Providers: UniversityProvider > ThemeProvider > DataServiceProvider
   index.tsx               Redirects to /select or /(tabs) based on the saved choice
   select.tsx              University select (neutral theme until a school is chosen, D15)
   (tabs)/_layout.tsx      Tabs: Home, Schedule, About (Ionicons, 13 pt scalable labels, D13)
-  (tabs)/index.tsx        Home / map
+  (tabs)/index.tsx        Home / map: pin, StatusCard, "Where's {dog} now?" recenter
   (tabs)/schedule.tsx     Weekly hours + recurring stops with names (D14)
-  (tabs)/about.tsx        Includes the __DEV__-only "Demo controls" status override
+  (tabs)/about.tsx        Program text, contact link, change university, __DEV__ "Demo controls"
 src/
   config/universities/    csu.ts, utah.ts, index.ts (registry array)
-  theme/                  tokens.ts, ThemeProvider.tsx, useTheme(), contrast.ts, neutral.ts (D15)
+  theme/                  tokens.ts, ThemeProvider.tsx, useTheme(), contrast.ts, neutral.ts
   data/                   DataService.ts, mock/, index.ts (factory), hooks.ts, devControls.ts
   domain/                 status.ts (computeStatus), types.ts
   state/                  University selection context + AsyncStorage
   components/             ThemedText, LoadingView, EmptyView, ErrorView, UniversityCard, schedule/, about/
   components/home/        StatusCard, RecenterButton, DogMarker, HomeEmptyState, HomeErrorState, format.ts
 ```
+Mock data: CSU uses Biscuit with handler Maya, and Utah uses Juniper with handler Sam. There are 5 approximate stops per campus.
 
 ### Data-service interface
 ```ts
@@ -39,34 +43,38 @@ type LocationUpdate =
 ```
 
 ## Work history
-| # | Branch | Original base | Scope | GitHub PR | Reached main? |
-|---|--------|---------------|-------|-----------|---------------|
-| 1 | `scaffold-theming` | main | Shell, theme, config, persistence, tests | #1 | Yes |
-| 2 | `data-layer` | `scaffold-theming` | Types, DataService, mock, status, simulator | #2 | No |
-| 3 | `map-home` | `data-layer` | Home/map screen | #3 | No |
-| 4 | `screens-select-schedule-about` | `data-layer` | Select, Schedule, About, README | #4 | No |
-| 5 | `schedule-stop-names` | `screens-select-schedule-about` | Stop names (D14) | #5 | No |
-| 6 | `ui-polish` | `screens-select-schedule-about` | Icons, labels, neutral theme (D13, D15) | #6 | No |
-| 7 | `restore-merged-work` | **main** | Bring 2 to 6 + docs into main | TBD | IN PROGRESS |
+| # | Branch | Scope | GitHub PR | Outcome |
+|---|--------|-------|-----------|---------|
+| 1 | `scaffold-theming` | Shell, theme, config, persistence, tests | #1 | Merged to main |
+| 2 | `data-layer` | Types, DataService, mock, status, simulator | #2 | Merged to its stacked base, reached main via #7 |
+| 3 | `map-home` | Home/map screen | #3 | Same as above |
+| 4 | `screens-select-schedule-about` | Select, Schedule, About, README | #4 | Same as above |
+| 5 | `schedule-stop-names` | Stop names (D14) | #5 | Same as above |
+| 6 | `ui-polish` | Icons, labels, neutral theme (D13, D15) | #6 | Same as above |
+| 7 | `restore-merged-work` | Brought #2 to #6 + docs into main | #7 | Merged to main. User verified on device |
 
-Rule from now on (D16): every PR targets `main`.
+Rule (D16): every PR targets `main`. The old feature branches still exist on GitHub and can be deleted.
 
-## Open risks / unverified
-- Until #7 merges, `main` only has the placeholder scaffold.
-- After #7: verify on device: map/pin, icons, neutral select, stop names, large-font tab labels, Hermes `Intl` timezone.
-- iOS VoiceOver status announcements are not implemented. The PR 3 error/retry path is untested.
-- Duplication: `HomeEmptyState`/`HomeErrorState` vs `EmptyView`/`ErrorView`.
-- `jest.config` ignores `/.claude/` (affects agent worktrees only).
+## Backlog / known gaps (not started)
+1. iOS VoiceOver announcement of status changes (only the Android live region exists).
+2. Test the Home error/retry path.
+3. Consolidate `HomeEmptyState`/`HomeErrorState` into the generic `EmptyView`/`ErrorView`.
+4. Confirm the Hermes `Intl` timezone formatting is correct on device across the DST change (Nov 1 2026). A fallback formatter exists.
+5. Stop coordinates are approximate (D10). Replace them with real data when the API exists.
+6. Real backend: implement `DataService`, swap the factory in `src/data/index.ts`, and have the server send `stops` and coordinate-free off-duty updates (see README).
+7. Standalone Android build needs a Google Maps API key.
+8. Optional cleanup: one-line fixtures in `__tests__/status.test.ts`. `jest.config` ignores `/.claude/` (affects agent worktrees only).
 
-## Done criteria (whole project)
-- `npx expo start` runs in Expo Go on iOS and Android.
-- Switching university re-themes the whole app right away. No hex literals outside `src/config` and `src/theme`.
-- Every text/background token pair passes 4.5:1.
-- The pin appears only during working hours. Off duty shows "Off duty" and the next start time.
-- Adding a school = config file plus registry entry plus mock data.
-- Controls are labeled. Text scales.
+## Done criteria (whole project): met per the user's device test on 2026-10-10
+- `npx expo start` runs in Expo Go. ✅
+- Switching university re-themes the whole app. No hex outside `src/config`/`src/theme`. ✅
+- All text/background pairs ≥ 4.5:1 (unit tested). ✅
+- Pin only during working hours. Off duty shows the next start. ✅
+- Adding a school = config + registry entry + mock data. ✅
+- Labeled controls, scalable text. ✅ (VoiceOver announcement gap noted above)
 
 ## Status log
 - 2026-10-10: Plan drafted. Intern research done. User approved D1 to D11.
 - 2026-10-10: PRs #1 to #4 opened. User device test led to D12 to D15. #5 and #6 opened.
-- 2026-10-10: User merged all six. Only #1 reached main (stacked bases). The uncommitted docs were overwritten by the PR-1 versions and restored by the PM from context. Recovery PR dispatched.
+- 2026-10-10: User merged all six. Only #1 reached main (stacked bases, D16). Recovery PR #7 opened.
+- 2026-10-10: User merged #7 and verified all features on their phone. Prototype complete. Session ended.
