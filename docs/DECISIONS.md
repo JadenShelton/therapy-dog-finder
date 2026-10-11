@@ -1,7 +1,7 @@
 # Decisions
 
 Each entry: status (PROPOSED / APPROVED / REJECTED), the choice, and why.
-**2026-10-10: User approved D1 to D10 as written, and D11.**
+**2026-10-10: User approved D1 to D11, then D12 to D15.**
 
 ## D1: Navigation: Expo Router (file-based, tabs + stack). APPROVED
 Default in current Expo templates and works in Expo Go.
@@ -29,7 +29,8 @@ Off-duty `LocationUpdate`s contain no coordinates. Schedules are evaluated in th
 
 ## D8: Testing: Jest + `jest-expo` + `@testing-library/react-native`. APPROVED
 
-## D9: Git workflow: stacked PRs (see PLAN.md table). APPROVED
+## D9: Git workflow: stacked PRs. APPROVED, then SUPERSEDED by D16
+See D16 for what went wrong.
 
 ## D10: Campus coordinates: approximate, from public map data, with a `// approximate` comment on each. APPROVED
 Third-party reference points: CSU center 40.57377, -105.09093 / 40.57326, -105.08679; Utah center 40.76037, -111.84145; Marriott Library 40.76248, -111.84618.
@@ -37,12 +38,21 @@ Third-party reference points: CSU center 40.57377, -105.09093 / 40.57326, -105.0
 ## D11: Placeholders. APPROVED
 Placeholder names (app, dog, handler), logos, and pictures are fine. App name is "Paws on Campus". No official logos or trademarks.
 
-## D12: Extra dependencies added in PR 1 without prior approval. PROPOSED (needs user OK)
-The PR 1 engineer added these, which were not in the brief's allowed list:
-- `react-native-gesture-handler`, `react-native-reanimated`, `react-native-worklets`, `react-dom`, `react-native-web`. The engineer says expo-router's peer requirements failed without them.
-- `@types/jest` (dev only).
+## D12: Keep the extra dependencies added in PR 1. APPROVED (user, 2026-10-10)
+`react-native-gesture-handler`, `react-native-reanimated`, `react-native-worklets`, `react-dom`, `react-native-web` (Expo Router peers), and `@types/jest`.
 
-PM view: these are standard Expo Router peers that ship with Expo Go, so D1 effectively implies them. The recommendation is to keep them.
+## D13: Tab icons via `@expo/vector-icons` (Ionicons). APPROVED (user, 2026-10-10)
+Generic map, calendar, and info icons. Tab labels use the 13 pt caption size and scale with the system font size (the user found the original labels too small on device).
 
-## D13: Tab icons. PROPOSED (needs user OK)
-PR 1 shipped tabs without icons. Proposal: use `@expo/vector-icons` (bundled with Expo and available in Expo Go) for generic icons such as map, calendar, and info. These are not university marks.
+## D14: Stop names: `stops: Stop[]` on `WeeklySchedule` (option a). APPROVED (user, 2026-10-10)
+`getSchedule` returns the stop catalog. The Schedule screen resolves `recurringStops[].stopId` to names, falling back to "Campus stop".
+
+## D15: Neutral theme before a university is chosen. APPROVED (user request, 2026-10-10)
+`src/theme/neutral.ts`. Used whenever no university is selected (the select header, status bar, and loading view). The lowest pair is 6.26:1.
+
+## D16: Git workflow fix: every PR targets `main`. APPROVED (implied by the user's fix request, 2026-10-10)
+What happened: PRs #2 to #6 were stacked (based on their predecessor branches). When the user merged them on GitHub, each merged into its base branch, not `main`. Only PR #1 reached `main`. The PM gave a merge order without warning about retargeting.
+
+Going forward: every PR targets `main`. If a stack is ever needed, the PM must tell the user to retarget each PR to `main` before merging (or the engineer does it).
+
+Recovery: a single PR `restore-merged-work` → `main` brings in the content of all the branches.
