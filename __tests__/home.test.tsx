@@ -16,7 +16,7 @@ jest.mock('react-native-maps', () => {
 });
 
 const dog = { id: 'd1', name: 'Biscuit', universityId: 'csu', handler: { firstName: 'Sam' } };
-const schedule = { shifts: {}, recurringStops: [] };
+const schedule = { shifts: {}, recurringStops: [], stops: [] };
 
 function makeService(update: LocationUpdate, dogResult: unknown = dog): DataService {
   return {
