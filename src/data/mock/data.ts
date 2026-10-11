@@ -34,6 +34,7 @@ const csuSchedule: WeeklySchedule = {
     { weekday: 3, start: '10:00', end: '11:00', stopId: 'csu-lory', note: 'Study break' },
     { weekday: 4, start: '13:00', end: '14:00', stopId: 'csu-oval', note: 'Oval meet-up' },
   ],
+  stops: csuStops,
 };
 
 const utahSchedule: WeeklySchedule = {
@@ -49,6 +50,7 @@ const utahSchedule: WeeklySchedule = {
     { weekday: 4, start: '11:30', end: '12:30', stopId: 'utah-olpin', note: 'Union lunch hour' },
     { weekday: 5, start: '11:00', end: '12:00', stopId: 'utah-circle' },
   ],
+  stops: utahStops,
 };
 
 /** Keyed by university id (must match a config in src/config/universities). */

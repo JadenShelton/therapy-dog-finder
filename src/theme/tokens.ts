@@ -1,5 +1,6 @@
 import type { UniversityConfig, UniversityTheme } from '../config/universities';
 import { relativeLuminance } from './contrast';
+import { neutralColors } from './neutral';
 
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
 export const radii = { sm: 6, md: 12, lg: 20, pill: 999 } as const;
@@ -11,7 +12,8 @@ export const typeScale = {
 } as const;
 
 export type Theme = {
-  universityId: string;
+  /** null for the neutral (no university selected) theme. */
+  universityId: string | null;
   colors: UniversityTheme;
   spacing: typeof spacing;
   radii: typeof radii;
@@ -31,6 +33,18 @@ export const textPairs: ReadonlyArray<readonly [keyof UniversityTheme, keyof Uni
   ['primary', 'background'], // primary used as link/active tab text on background
   ['primary', 'surface'],
 ];
+
+/** Neutral, non-branded theme for when no university is selected. */
+export function buildNeutralTheme(): Theme {
+  return {
+    universityId: null,
+    colors: neutralColors,
+    spacing,
+    radii,
+    type: typeScale,
+    statusBarStyle: relativeLuminance(neutralColors.onPrimary) > 0.5 ? 'light' : 'dark',
+  };
+}
 
 export function buildTheme(u: UniversityConfig): Theme {
   return {

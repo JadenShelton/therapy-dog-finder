@@ -42,7 +42,7 @@ Colors come only from theme tokens. A test fails if a hex color literal appears 
 No component changes are needed.
 
 ## How to connect real data
-1. Implement the `DataService` interface in `src/data/DataService.ts` (`getUniversities`, `getDog`, `getSchedule`, `subscribeToLocation`).
+1. Implement the `DataService` interface in `src/data/DataService.ts` (`getUniversities`, `getDog`, `getSchedule`, `subscribeToLocation`). `getSchedule` returns `stops` (the campus stop catalog) alongside shifts and recurring stops, so the Schedule screen can show stop names.
 2. Swap the implementation returned by the factory in `src/data/createDataService.ts` (re-exported from `src/data/index.ts`).
 3. Off-duty updates must be coordinate-free on the server. Do not send a location when the dog is off duty; the client type has no coordinates for `off_duty`.
 4. Replace the mock's polling and timers with a websocket or server-sent-events connection behind `subscribeToLocation`. Keep the same contract: call the callback right away, then on each change, and return an unsubscribe function.

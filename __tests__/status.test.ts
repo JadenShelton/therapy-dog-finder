@@ -7,7 +7,7 @@ const schedule: WeeklySchedule = {
     1: [{ start: '10:00', end: '14:00', breaks: [{ start: '12:00', end: '12:30' }] }],
     5: [{ start: '10:00', end: '14:00', breaks: [{ start: '12:00', end: '12:30' }] }],
   },
-  recurringStops: [],
+  recurringStops: [], stops: [],
 };
 // October 2026 is MDT (UTC-6). Mon Oct 12 2026.
 const mdt = (day: number, hhmm: string) => new Date(`2026-10-${String(day).padStart(2, '0')}T${hhmm}:00-06:00`);
@@ -44,11 +44,11 @@ describe('computeStatus', () => {
     expect(r.nextStart).toBe('2026-10-19T16:00:00.000Z');
   });
   it('same weekday next week when only one shift day exists and it already ended', () => {
-    const only: WeeklySchedule = { shifts: { 1: [{ start: '10:00', end: '14:00' }] }, recurringStops: [] };
+    const only: WeeklySchedule = { shifts: { 1: [{ start: '10:00', end: '14:00' }] }, recurringStops: [], stops: [] };
     expect(computeStatus(only, mdt(12, '15:00'), TZ).nextStart).toBe('2026-10-19T16:00:00.000Z');
   });
   it('empty schedule gives null', () => {
-    const r = computeStatus({ shifts: {}, recurringStops: [] }, mdt(12, '11:00'), TZ);
+    const r = computeStatus({ shifts: {}, recurringStops: [], stops: [] }, mdt(12, '11:00'), TZ);
     expect(r).toEqual({ status: 'off_duty', nextStart: null, todayHours: [] });
   });
   it('evaluates in the campus zone, not UTC', () => {
@@ -60,7 +60,7 @@ describe('computeStatus', () => {
   describe('DST end, Sunday Nov 1 2026 (02:00 MDT -> 01:00 MST)', () => {
     const sun: WeeklySchedule = {
       shifts: { 0: [{ start: '09:00', end: '12:00' }], 6: [{ start: '09:00', end: '12:00' }] },
-      recurringStops: [],
+      recurringStops: [], stops: [],
     };
     it('next start across the change uses the new offset', () => {
       const r = computeStatus(sun, new Date('2026-10-31T20:00:00Z'), TZ); // Sat 14:00 MDT
