@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { DataServiceProvider } from '../src/data';
 import { UniversityProvider } from '../src/state';
 import { ThemeProvider, useTheme } from '../src/theme';
 
@@ -28,7 +29,9 @@ export default function RootLayout() {
   return (
     <UniversityProvider>
       <ThemeProvider>
-        <ThemedStack />
+        <DataServiceProvider>
+          <ThemedStack />
+        </DataServiceProvider>
       </ThemeProvider>
     </UniversityProvider>
   );
